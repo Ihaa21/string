@@ -1,15 +1,3 @@
-#pragma once
-
-/* ========================================================================
-   $File: $
-   $Date: $
-   $Revision: $
-   $Creator: Ihor Szlachtycz $
-   $Notice: (C) Copyright 2014 by Dream.Inc, Inc. All Rights Reserved. $
-   ======================================================================== */
-
-// IMPORTANT: The below stuff causes bugs when modified because of \n\r stuff in windows and else where
-// Keep that in mind so try to add extra cases instead of modifying current cases
 
 //
 // NOTE: Char functions
@@ -54,55 +42,9 @@ inline b32 IsDeadSpace(char A)
 
 inline u32 CharToUInt(char C)
 {
-    u32 Result = 0;
-
-    switch (C)
-    {
-        case '1':
-        {
-            Result = 1;
-        } break;
-
-        case '2':
-        {
-            Result = 2;
-        } break;
-
-        case '3':
-        {
-            Result = 3;
-        } break;
-
-        case '4':
-        {
-            Result = 4;
-        } break;
-
-        case '5':
-        {
-            Result = 5;
-        } break;
-
-        case '6':
-        {
-            Result = 6;
-        } break;
-
-        case '7':
-        {
-            Result = 7;
-        } break;
-        
-        case '8':
-        {
-            Result = 8;
-        } break;
-
-        case '9':
-        {
-            Result = 9;
-        } break;
-    }
+    u32 Result = u32(C) - u32('0');
+    Assert(Result <= 9);
+    Assert(Result >= 0);
 
     return Result;
 }
@@ -110,12 +52,6 @@ inline u32 CharToUInt(char C)
 //
 // NOTE: String functions
 //
-
-struct string
-{
-    u32 NumChars;
-    char* Chars;
-};
 
 inline string String(char* Chars, u32 NumChars)
 {
@@ -175,41 +111,6 @@ inline b32 StringContained(string Small, string Big)
     return Result;
 }
 
-// TODO: The same as string contained, remove?
-inline b32 WordContained(string Small, char* Big)
-{
-    b32 Result = true;
-    
-    for (u32 CharId = 0; CharId < Small.NumChars; ++CharId)
-    {
-        if (Big[CharId] != Small.Chars[CharId])
-        {
-            Result = false;
-            break;
-        }
-    }
-
-    // NOTE: Verify that the current string is not inside a bigger word
-    if (!IsDeadSpace(Big[Small.NumChars]))
-    {
-        Result = false;
-    }
-
-    return Result;
-}
-
-// TODO: The same as string contained, remove?
-inline b32 WordContained(string Small, string Big)
-{
-    b32 Result = false;
-    if (Big.NumChars >= Small.NumChars)
-    {
-        Result = WordContained(Small, Big.Chars);
-    }
-    
-    return Result;
-}
-
 inline b32 StringsEqual(string A, string B)
 {
     b32 Result = false;
@@ -222,7 +123,9 @@ inline b32 StringsEqual(string A, string B)
     return Result;
 }
 
+//
 // NOTE: Advance string functions
+//
 
 inline u32 NumCharsToNewLine(string Body)
 {
@@ -323,10 +226,12 @@ inline u32 ReadUInt(string Body, u32* OutUInt)
     return NumChars;
 }
 
-inline void ReadUIntAndAdvance(string* Body, u32* OutUInt)
+inline u32 ReadUIntAndAdvance(string* Body, u32* OutUInt)
 {
     u32 NumUIntChars = ReadUInt(*Body, OutUInt);
     AdvanceString(Body, NumUIntChars);
+
+    return NumUIntChars;
 }
 
 inline u32 ReadFloat(string Body, f32* OutFloat)
@@ -395,8 +300,9 @@ inline u32 ReadFloat(string Body, f32* OutFloat)
     return NumChars;
 }
 
-inline void ReadFloatAndAdvance(string* Body, f32* OutFloat)
+inline u32 ReadFloatAndAdvance(string* Body, f32* OutFloat)
 {
     u32 NumFloatChars = ReadFloat(*Body, OutFloat);
     AdvanceString(Body, NumFloatChars);
+    return NumFloatChars;
 }
